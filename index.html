@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeroBite - Food Waste Zero-Point Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2d5016;
+            --secondary: #f5f5f5;
+            --accent: #e8e8e8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border: #d0d0d0;
+            --success: #4a7c3c;
+            --error: #c53030;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #fafafa;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            border-bottom: 1px solid var(--accent);
+            padding: 24px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: 0.3px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Input Section */
+        .input-section {
+            background-color: white;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .dietary-preference {
+            grid-column: 1 / -1;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+        }
+
+        .preference-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .preference-options {
+            display: flex;
+            gap: 12px;
+        }
+
+        .radio-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-wrapper input[type="radio"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .radio-wrapper label {
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        textarea {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(45, 80, 22, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #234010;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:disabled {
+            background-color: #999999;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: var(--secondary);
+        }
+
+        /* Output Section */
+        .output-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .output-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background-color: white;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Loading State */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--accent);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error {
+            background-color: #fee;
+            color: var(--error);
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background-color: #efe;
+            color: var(--success);
+            border: 1px solid #cfc;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .input-section {
+                padding: 20px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .card {
+                padding: 16px;
+            }
+        }
+
+        /* Icon placeholders */
+        .icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            font-size: 12px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        /* OCR Section Styles */
+        .ocr-section {
+            background-color: white;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .ocr-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 6px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: #fafafa;
+        }
+
+        .ocr-upload-area:hover {
+            border-color: var(--primary);
+            background-color: #f0f5ec;
+        }
+
+        .ocr-upload-area.dragover {
+            border-color: var(--primary);
+            background-color: #f0f5ec;
+        }
+
+        .upload-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: #999;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 6px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        #imagePreview.show {
+            display: block;
+        }
+
+        .image-preview-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 8px 0;
+        }
+
+        .status-safe {
+            background-color: #efe;
+            color: var(--success);
+            border: 1px solid #cfc;
+        }
+
+        .status-expiring {
+            background-color: #ffe;
+            color: #ff8c00;
+            border: 1px solid #ffd700;
+        }
+
+        .status-expired {
+            background-color: #fee;
+            color: var(--error);
+            border: 1px solid #fcc;
+        }
+
+        .status-unknown {
+            background-color: #eee;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .ocr-results {
+            display: none;
+            margin-top: 24px;
+        }
+
+        .ocr-results.active {
+            display: block;
+        }
+
+        .ocr-results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-item {
+            padding: 12px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .extracted-text-container {
+            margin-top: 16px;
+        }
+
+        .extracted-text-toggle {
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+            user-select: none;
+        }
+
+        .extracted-text-content {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .extracted-text-content.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .ocr-results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">ZeroBite</div>
+            <div class="tagline">Plan meals. Reduce waste. Zero compromise.</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- OCR Section -->
+        <div class="ocr-section">
+            <h2 class="section-title">📸 Scan Expiry Label (OCR)</h2>
+            
+            <div class="ocr-upload-area" id="uploadArea">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Click to upload or drag image here</div>
+                <div class="upload-hint">Supported: JPG, PNG (Max 16MB)</div>
+                <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            </div>
+
+            <div class="image-preview-container">
+                <img id="imagePreview" alt="Preview">
+            </div>
+
+            <div id="ocrAlert"></div>
+
+            <div class="button-group">
+                <button class="btn-secondary" onclick="clearOCR()">Clear</button>
+                <button class="btn-primary" id="extractBtn" onclick="extractExpiryText()" style="display: none;">
+                    Extract Expiry Text
+                </button>
+            </div>
+
+            <!-- OCR Results -->
+            <div class="ocr-results" id="ocrResults">
+                <div class="ocr-results-grid">
+                    <div class="info-item">
+                        <div class="info-label">Detected Expiry Date</div>
+                        <div class="info-value" id="detectedExpiry">Loading...</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Food Status</div>
+                        <div id="foodStatus" style="margin-top: 4px;"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">
+                        <span class="icon">💡</span>
+                        AI Recommendation
+                    </div>
+                    <div class="card-content" id="aiRecommendation">
+                        Analyzing...
+                    </div>
+                </div>
+
+                <div class="extracted-text-container">
+                    <div class="extracted-text-toggle" onclick="toggleExtractedText()">
+                        📄 Show Extracted Text (Optional)
+                    </div>
+                    <div class="extracted-text-content" id="extractedTextContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <h2 class="section-title">Create Your Waste-Free Plan</h2>
+            
+            <div class="input-grid">
+                <div class="form-group">
+                    <label for="expiring">Ingredients Expiring Soon *</label>
+                    <p class="hint">Enter items separated by commas (e.g., tomato, curd, spinach)</p>
+                    <textarea id="expiring" placeholder="e.g., tomato, curd, spinach"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="pantry">Your Pantry Ingredients *</label>
+                    <p class="hint">Enter available items separated by commas</p>
+                    <textarea id="pantry" placeholder="e.g., rice, onion, oil, salt, spices"></textarea>
+                </div>
+
+                <div class="dietary-preference">
+                    <label class="preference-label">Dietary Preference *</label>
+                    <div class="preference-options">
+                        <div class="radio-wrapper">
+                            <input type="radio" id="veg" name="dietary" value="veg">
+                            <label for="veg">🥬 Vegetarian</label>
+                        </div>
+                        <div class="radio-wrapper">
+                            <input type="radio" id="non-veg" name="dietary" value="non-veg">
+                            <label for="non-veg">🍗 Non-Vegetarian</label>
+                        </div>
+                        <div class="radio-wrapper">
+                            <input type="radio" id="both" name="dietary" value="both" checked>
+                            <label for="both">🍽️ Both</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <div class="button-group">
+                <button class="btn-secondary" onclick="clearForm()">Clear</button>
+                <button class="btn-primary" id="generateBtn" onclick="generatePlan()">
+                    Generate Waste-Free Plan
+                </button>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="output-section" id="outputSection">
+            <!-- Dietary Preference Display -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">✓</span>
+                    Plan Generated For
+                </div>
+                <div class="card-content" id="preferenceContent">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Planning Card -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📋</span>
+                    Planning Strategy
+                </div>
+                <div class="card-content" id="planContent">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🤔</div>
+                        <p>Loading your personalized strategy...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meal Plan Card -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🍳</span>
+                    2-Day Meal Plan
+                </div>
+                <div class="card-content" id="mealContent">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🍽️</div>
+                        <p>Generating your meal plan...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Waste Audit Card -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">✅</span>
+                    Waste Audit & Insights
+                </div>
+                <div class="card-content" id="auditContent">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Analyzing your meal plan...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shopping List Card -->
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">🛒</span>
+                    Minimal Shopping List
+                </div>
+                <div class="card-content" id="finalContent">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>Creating your shopping list...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let selectedImageFile = null;
+
+        // ========== OCR FUNCTIONS ==========
+
+
+        function setupOCRUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const imageInput = document.getElementById('imageInput');
+
+            // Click to upload
+            uploadArea.addEventListener('click', () => imageInput.click());
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                handleImageSelect(e.dataTransfer.files[0]);
+            });
+
+            // File input change
+            imageInput.addEventListener('change', (e) => {
+                handleImageSelect(e.target.files[0]);
+            });
+        }
+
+        function handleImageSelect(file) {
+            if (!file || !file.type.startsWith('image/')) {
+                showOCRAlert('Please select a valid image file', 'error');
+                return;
+            }
+
+            if (file.size > 16 * 1024 * 1024) {
+                showOCRAlert('File too large. Maximum 16MB', 'error');
+                return;
+            }
+
+            selectedImageFile = file;
+
+            // Preview image
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById('imagePreview');
+                preview.src = e.target.result;
+                preview.classList.add('show');
+            };
+            reader.readAsDataURL(file);
+
+            // Show extract button
+            document.getElementById('extractBtn').style.display = 'inline-block';
+            showOCRAlert('Image selected. Click "Extract Expiry Text" to process.', 'success');
+        }
+
+        async function extractExpiryText() {
+            if (!selectedImageFile) {
+                showOCRAlert('Please select an image first', 'error');
+                return;
+            }
+
+            const extractBtn = document.getElementById('extractBtn');
+            extractBtn.disabled = true;
+            extractBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+
+            try {
+                const formData = new FormData();
+                formData.append('image', selectedImageFile);
+
+                const response = await fetch(`${API_BASE}/ocr-expiry`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'OCR processing failed');
+                }
+
+                const result = await response.json();
+                const data = result.data;
+
+                // Display results
+                displayOCRResults(data);
+                showOCRAlert('✓ Expiry text extracted successfully!', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showOCRAlert(error.message || 'Failed to process image', 'error');
+            } finally {
+                extractBtn.disabled = false;
+                extractBtn.innerHTML = 'Extract Expiry Text';
+            }
+        }
+
+        function displayOCRResults(data) {
+            const resultsSection = document.getElementById('ocrResults');
+            const detectedExpiry = document.getElementById('detectedExpiry');
+            const foodStatus = document.getElementById('foodStatus');
+            const aiRecommendation = document.getElementById('aiRecommendation');
+            const extractedText = document.getElementById('extractedTextContent');
+
+            // Detected expiry
+            detectedExpiry.textContent = data.detected_expiry || 'Not detected in label';
+
+            // Food status
+            const status = data.food_status;
+            const statusBadge = `
+            <div class="status-badge status-${status.status.toLowerCase().replace(' ', '-')}">
+                ${status.status}
+                ${status.days_remaining !== undefined
+                            ? `(${status.days_remaining} days)`
+                            : ''}
+                <div class="status-message">${status.message}</div>
+            </div>
+        `;
+
+            foodStatus.innerHTML = statusBadge;
+
+            // AI Recommendation
+            aiRecommendation.textContent = data.ai_recommendation || 'Processing recommendation...';
+
+            // Extracted text
+            extractedText.textContent = data.extracted_text;
+
+            resultsSection.classList.add('active');
+        }
+
+        function toggleExtractedText() {
+            const content = document.getElementById('extractedTextContent');
+            const toggle = document.querySelector('.extracted-text-toggle');
+            
+            content.classList.toggle('show');
+            toggle.textContent = content.classList.contains('show') 
+                ? '📄 Hide Extracted Text' 
+                : '📄 Show Extracted Text (Optional)';
+        }
+
+        function clearOCR() {
+            selectedImageFile = null;
+            document.getElementById('imageInput').value = '';
+            document.getElementById('imagePreview').classList.remove('show');
+            document.getElementById('extractBtn').style.display = 'none';
+            document.getElementById('ocrResults').classList.remove('active');
+            document.getElementById('ocrAlert').innerHTML = '';
+        }
+
+        function showOCRAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('ocrAlert');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            if (type === 'success') {
+                setTimeout(() => alertDiv.remove(), 5000);
+            }
+        }
+        function parseInput(str) {
+                
+            }
+
+    
+        // ========== MEAL PLAN FUNCTIONS ==========
+
+        function showAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('alert-container');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        function clearForm() {
+            document.getElementById('expiring').value = '';
+            document.getElementById('pantry').value = '';
+            document.getElementById('both').checked = true;
+            document.getElementById('outputSection').classList.remove('active');
+            document.getElementById('alert-container').innerHTML = '';
+        }
+
+        function parseInput(str) {
+            return str
+                .split(',')
+                .map(item => item.trim().toLowerCase())
+                .filter(item => item.length > 0);
+        }
+
+        async function generatePlan() {
+            const expiringInput = document.getElementById('expiring').value.trim();
+            const pantryInput = document.getElementById('pantry').value.trim();
+            const dietaryPref = document.querySelector('input[name="dietary"]:checked').value;
+
+            // Validation
+            if (!expiringInput || !pantryInput) {
+                showAlert('Please fill in both ingredient fields', 'error');
+                return;
+            }
+
+            const expiring = parseInput(expiringInput);
+            const ingredients = parseInput(pantryInput);
+
+            if (expiring.length === 0 || ingredients.length === 0) {
+                showAlert('Please enter valid ingredients', 'error');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('outputSection').classList.add('active');
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').innerHTML = '<span class="loading-spinner"></span> Generating...';
+
+            try {
+                const response = await fetch(`${API_BASE}/generate-plan`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        expiring, 
+                        ingredients,
+                        dietary_preference: dietaryPref
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to generate plan');
+                }
+
+                const result = await response.json();
+                const data = result.data;
+
+                // Format dietary preference display
+                const dietaryLabel = {
+                    'veg': '🥬 Vegetarian',
+                    'non-veg': '🍗 Non-Vegetarian',
+                    'both': '🍽️ Flexible (Both)'
+                };
+
+                // Update UI with responses
+                document.getElementById('preferenceContent').textContent = dietaryLabel[data.dietary_preference] || 'Flexible';
+                document.getElementById('planContent').textContent = data.plan || 'No plan available';
+                document.getElementById('mealContent').textContent = data.meals || 'No meals suggested';
+                document.getElementById('auditContent').textContent = data.audit || 'No audit available';
+                document.getElementById('finalContent').textContent = data.final || 'No recommendations';
+
+                showAlert('✓ Your waste-free plan is ready!', 'success');
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert(error.message || 'Failed to generate plan. Please try again.', 'error');
+                document.getElementById('outputSection').classList.remove('active');
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').innerHTML = 'Generate Waste-Free Plan';
+            }
+        }
+
+        // Enter key support
+        document.getElementById('expiring').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) generatePlan();
+        });
+
+        document.getElementById('pantry').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) generatePlan();
+        });
+
+        // Initialize OCR upload on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setupOCRUpload();
+        });
+    </script>
+</body>
+</html>
