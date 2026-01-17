@@ -1,0 +1,15 @@
+Tomato Rice | tomato, rice, onion
+Paneer Bhurji | paneer, onion, tomato
+Vegetable Khichdi | rice, dal, vegetables
+Curd Rice | rice, curd
+Simple Dal | dal, onion, tomato
+Tomato Soup | tomato, onion, water
+Paneer Curry | paneer, tomato, onion, spices
+Vegetable Stir Fry | vegetables, oil, onion
+Dal Makhani | dal, cream, butter, onion
+Mixed Vegetable Rice | rice, vegetables, oil
+Onion Paratha | flour, onion, oil
+Tomato Chutney | tomato, onion, chili
+Paneer Fried Rice | rice, paneer, vegetables, oil
+Simple Vegetable Curry | vegetables, onion, tomato
+Curd with Rice | rice, curd, salt

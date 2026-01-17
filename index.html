@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZeroBite - Food Waste Planner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🍽️ ZeroBite</h1>
+                <p>Zero food waste starts with smart planning</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="card">
+                    <h2>📦 Your Ingredients</h2>
+                    
+                    <!-- Add Ingredient Form -->
+                    <div class="form-group">
+                        <label for="ingredientName">Ingredient Name</label>
+                        <input type="text" id="ingredientName" placeholder="e.g., Tomato, Paneer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expiryDays">Expires in (days)</label>
+                        <input type="number" id="expiryDays" placeholder="e.g., 1, 2, 3" min="0" max="30">
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="addIngredient()">+ Add Ingredient</button>
+                    
+                    <!-- Ingredients List -->
+                    <div id="ingredientsList" class="items-list">
+                        <!-- Items added here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🏪 Your Pantry</h2>
+                    
+                    <!-- Add Pantry Item Form -->
+                    <div class="form-group">
+                        <label for="pantryItem">Pantry Item</label>
+                        <input type="text" id="pantryItem" placeholder="e.g., Rice, Oil, Onion">
+                    </div>
+                    
+                    <button class="btn btn-secondary" onclick="addPantryItem()">+ Add Item</button>
+                    
+                    <!-- Pantry Items List -->
+                    <div id="pantryList" class="items-list">
+                        <!-- Items added here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generate Button -->
+            <div class="button-container">
+                <button class="btn btn-primary" onclick="generatePlan()" id="generateBtn">
+                    ✨ Generate ZeroBite Plan
+                </button>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Creating your waste-free meal plan...</p>
+            </div>
+
+            <!-- Results Section -->
+            <section id="results" class="results-section hidden">
+                <div class="card">
+                    <h2>📊 Expiry Analysis</h2>
+                    <div id="expiryAnalysis" class="result-content">
+                        <!-- Results here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🍲 2-Day Meal Plan</h2>
+                    <div id="mealPlan" class="result-content">
+                        <!-- Results here -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>🔍 Waste Audit Report</h2>
+                    <div id="auditReport" class="result-content">
+                        <!-- Results here -->
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button class="btn btn-secondary" onclick="resetPlan()">← Start Over</button>
+                </div>
+            </section>
+
+            <!-- Error Message -->
+            <div id="error" class="error hidden"></div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Made for the Hackathon | Powered by AI</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
