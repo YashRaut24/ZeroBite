@@ -13,4 +13,5 @@ def root():
 
 @app.post("/plan")
 def generate_plan(data: PlannerInput):
+    print(data)
     return run_zero_bite_planner(data)

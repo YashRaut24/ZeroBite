@@ -9,7 +9,7 @@ def _init_llm():
     global llm, prompt
     if llm is None:
         llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
+            model="gemini-pro",
             google_api_key=os.getenv("GOOGLE_API_KEY")
         )
         prompt = PromptTemplate(
