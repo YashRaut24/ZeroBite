@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingredient Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .alert {
+            background-color: #ffdddd;
+            color: #d8000c;
+            padding: 15px;
+            border: 1px solid #d8000c;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            position: relative;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-buttons {
+            margin-top: 10px;
+        }
+
+        .alert-buttons button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-ignore {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card.low {
+            border-left: 5px solid #f44336;
+        }
+
+        .card.medium {
+            border-left: 5px solid #ff9800;
+        }
+
+        .card.sufficient {
+            border-left: 5px solid #4CAF50;
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .card p {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ingredient Dashboard</h1>
+
+    <div id="alert" class="alert">
+        <strong>Some ingredients are running low. Add to grocery list?</strong>
+        <div class="alert-buttons">
+            <button class="btn-add" onclick="addToGroceryList()">Add to grocery list</button>
+            <button class="btn-ignore" onclick="ignoreAlert()">Ignore</button>
+        </div>
+    </div>
+
+    <div id="grid" class="grid">
+        <!-- Cards will be generated here -->
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script>
+        // Sample ingredient data
+        const ingredients = [
+            { name: 'Tomatoes', quantity: 1 },
+            { name: 'Onions', quantity: 4 },
+            { name: 'Garlic', quantity: 6 },
+            { name: 'Rice', quantity: 2 },
+            { name: 'Oil', quantity: 8 },
+            { name: 'Salt', quantity: 10 },
+            { name: 'Pepper', quantity: 3 },
+            { name: 'Milk', quantity: 1 }
+        ];
+
+        let groceryList = [];
+
+        function getLevel(quantity) {
+            if (quantity <= 2) return 'low';
+            if (quantity <= 5) return 'medium';
+            return 'sufficient';
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            let hasLow = false;
+
+            ingredients.forEach(ingredient => {
+                const level = getLevel(ingredient.quantity);
+                if (level === 'low') hasLow = true;
+
+                const card = document.createElement('div');
+                card.className = `card ${level}`;
+                card.innerHTML = `
+                    <h3>${ingredient.name}</h3>
+                    <p>Quantity: ${ingredient.quantity}</p>
+                `;
+                grid.appendChild(card);
+            });
+
+            const alert = document.getElementById('alert');
+            if (hasLow) {
+                alert.classList.add('show');
+            } else {
+                alert.classList.remove('show');
+            }
+        }
+
+        function addToGroceryList() {
+            groceryList = ingredients.filter(ing => getLevel(ing.quantity) === 'low');
+            document.getElementById('alert').classList.remove('show');
+            const message = document.getElementById('message');
+            message.textContent = 'Added to grocery list';
+            message.classList.add('show');
+            setTimeout(() => message.classList.remove('show'), 3000);
+        }
+
+        function ignoreAlert() {
+            document.getElementById('alert').classList.remove('show');
+        }
+
+        // Initialize
+        renderDashboard();
+    </script>
+</body>
+</html>
